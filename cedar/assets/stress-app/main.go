@@ -21,6 +21,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	burnRate, err := strconv.ParseFloat(os.Getenv("CPU_BURNS_PER_SECOND"), 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	memRate, err := strconv.ParseFloat(os.Getenv("MEM_BURNS_PER_SECOND"), 64)
+	if err != nil {
+		log.Fatal(err)
+	}
 	minSecondsTilCrash, err := strconv.Atoi(os.Getenv("MIN_SECONDS_TIL_CRASH"))
 	if err != nil {
 		minSecondsTilCrash = 0
@@ -33,16 +41,27 @@ func main() {
 	vcapApplication := os.Getenv("VCAP_APPLICATION")
 	vcapApplicationBytes := []byte(vcapApplication)
 
-	var requestTicker, logTicker *time.Ticker
+	var requestTicker, logTicker, cpuTicker, memTicker *time.Ticker
 	var crashTimer *time.Timer
 
+	if burnRate > 0 {
+		cpuTicker = time.NewTicker(time.Duration(float64(time.Second) / burnRate))
+	} else {
+		cpuTicker = time.NewTicker(time.Hour)
+		cpuTicker.Stop()
+	}
+	if memRate > 0 {
+		memTicker = time.NewTicker(time.Duration(float64(time.Second) / memRate))
+	} else {
+		memTicker = time.NewTicker(time.Hour)
+		memTicker.Stop()
+	}
 	if requestRate > 0 {
 		requestTicker = time.NewTicker(time.Duration(float64(time.Second) / requestRate))
 	} else {
 		requestTicker = time.NewTicker(time.Hour)
 		requestTicker.Stop()
 	}
-
 	if logRate > 0 {
 		logTicker = time.NewTicker(time.Duration(float64(time.Second) / logRate))
 	} else {
@@ -97,4 +116,20 @@ func hitEndpoint(endpoint string) {
 		return
 	}
 	fmt.Fprintf(os.Stdout, "%v\n", string(body))
+}
+func burnCPU() {
+	cycles := int(1e8)
+	accumulate := 0
+	for i := 0; i < cycles; i = i + 1 {
+		accumulate = accumulate + i
+	}
+}
+
+func burnMemory() {
+	//allocate 800mb
+	memoryBytes := int(1e8)
+	a := make([]*int, memoryBytes)
+	//just to make sure the compiler doesn't optimize away
+	b := 500
+	a[300] = &b
 }

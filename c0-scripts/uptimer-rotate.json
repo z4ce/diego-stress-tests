@@ -1,0 +1,20 @@
+{
+    "while": [
+        {
+            "command": "/tmp/rotate_certs.sh"
+        }
+    ],
+    "cf": {
+        "api": "api.system.beast.pvd.pez.pivotal.io",
+        "app_domain": "apps.beast.pvd.pez.pivotal.io",
+        "admin_user": "admin",
+        "admin_password": "xx",
+        "use_single_app_instance": false
+    },
+    "allowed_failures": {
+        "app_pushability": 20,
+        "http_availability": 50,
+        "recent_logs": 20,
+        "streaming_logs": 20
+    }
+}

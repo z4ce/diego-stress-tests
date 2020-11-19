@@ -1,0 +1,28 @@
+TOTAL_MEM=$1
+TOTAL_USE=$(calc "$TOTAL_MEM * .70")
+
+# 4GB App
+echo cf create-org stress-test
+echo  cf create-space -o stress-test stress-space
+echo cf create-quota idowhatiwant -a -1 -i -1 -m 40000g -s 1000000 -r 90000000
+echo  cf set-quota stress-test idowhatiwant
+echo cf target -o "stress-test" -s "stress-space"
+echo cf push extra-heavy-1 -f ../manifests/manifest-heavy-extra.yml -i $(calc "ceil($TOTAL_USE*.1/4)")
+echo cf push extra-heavy-2 -f ../manifests/manifest-heavy-extra.yml -i $(calc "ceil($TOTAL_USE*.1/4)")
+
+
+echo cf push heavy-1 -f ../manifests/manifest-heavy.yml -i $(calc "ceil($TOTAL_USE*.1/4)")
+echo cf push heavy-2 -f ../manifests/manifest-heavy.yml -i $(calc "ceil($TOTAL_USE*.1/4)")
+# %40pct used
+
+echo cf push medium-1 -f ../manifests/manifest-medium.yml -i $(calc "ceil($TOTAL_USE*.1/2)")
+echo cf push medium-2 -f ../manifests/manifest-medium.yml -i $(calc "ceil($TOTAL_USE*.1/2)")
+
+echo cf push medium-extra-1 -f ../manifests/manifest-medium-extra.yml -i $(calc "ceil($TOTAL_USE*.1/2)")
+echo cf push medium-extra-2 -f ../manifests/manifest-medium-extra.yml -i $(calc "ceil($TOTAL_USE*.1)/2")
+
+# %80pct used
+echo cf push light-1 -f ../manifests/manifest-light.yml -i $(calc "ceil($TOTAL_USE*.05)")
+echo cf push light-2 -f ../manifests/manifest-light.yml -i $(calc "ceil($TOTAL_USE*.05)")
+echo cf push light-extra-1 -f ../manifests/manifest-light-extra.yml -i $(calc "ceil($TOTAL_USE*.05)")
+echo cf push light-extra-2 -f ../manifests/manifest-light-extra.yml -i $(calc "ceil($TOTAL_USE*.05)")

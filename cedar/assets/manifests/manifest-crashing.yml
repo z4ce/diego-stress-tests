@@ -7,7 +7,9 @@ applications:
   memory: 128M
   disk_quota: 100M
   env:
-    LOGS_PER_SECOND: 0
+    LOGS_PER_SECOND: 1
     REQUESTS_PER_SECOND: 0
     MIN_SECONDS_TIL_CRASH: 30
     MAX_SECONDS_TIL_CRASH: 360
+    CPU_BURNS_PER_SECOND: 1
+    MEM_BURNS_PER_SECOND: 1

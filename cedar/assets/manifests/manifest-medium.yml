@@ -3,8 +3,10 @@ applications:
 - instances: 1
   buildpack: binary_buildpack
   command: ./stress-app
-  memory: 128M
+  memory: 2G
   disk_quota: 100M
   env:
-    LOGS_PER_SECOND: 0
+    LOGS_PER_SECOND: 5
     REQUESTS_PER_SECOND: 0.06
+    CPU_BURNS_PER_SECOND: 10
+    MEM_BURNS_PER_SECOND: 10
